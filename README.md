@@ -1,20 +1,20 @@
 📦 Installation Guide
- • Extract AIO_Customizer.zip to /switch/.packages/
- • Extract assets.zip to the root of your SD card
-   Note:
- • assets does not need to be updated every time
- • When assets are updated, it will be clearly mentioned in the changelog
+• Extract AIO_Customizer.zip to /switch/.packages/
+• Extract assets.zip to the root of your SD card
+Note:
+• assets does not need to be updated every time
+• When assets are updated, it will be clearly mentioned in the changelog
 
 
 ⚠️ Important Notes & Recommendations
- • It is highly recommended to update the package using the built-in updater.
- • The updater includes a cleanup system that removes unused or obsolete files from the package.
- • Updates are released frequently, and files may be:
-   • Renamed
-   •Moved
-   •Replaced
-   •Or become unnecessary over time
- • Updating manually may leave unused files behind, while updating through the package ensures everything stays clean and organized.
+• It is highly recommended to update the package using the built-in updater.
+• The updater includes a cleanup system that removes unused or obsolete files from the package.
+• Updates are released frequently, and files may be:
+• Renamed
+• Moved
+• Replaced
+• Or become unnecessary over time
+• Updating manually may leave unused files behind, while updating through the package ensures everything stays clean and organized.
 
 
 Features
