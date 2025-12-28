@@ -52,12 +52,14 @@ This package is an all-in-one customization toolkit designed to easily personali
 
 # 🔧 More Options
 
-## 🎵 Background Music Support
+## 🎵 Background Music
 - Add or replace background music for:
   - hbAppStore
   - Sphaira
   - Home Menu
-- Enable or disable background
+- Enable or disable background music
+
+---
 
 ## 🛡️ Host Guard (by ppkantorski)
 
