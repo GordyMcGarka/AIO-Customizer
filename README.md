@@ -59,8 +59,6 @@ This package is an all-in-one customization toolkit designed to easily personali
   - Home Menu
 - Enable or disable background music
 
----
-
 ## 🛡️ Host Guard (by ppkantorski)
 
 ## ⚙️ Exosphere.ini Settings
