@@ -66,4 +66,4 @@ This package is an all-in-one customization toolkit designed to easily personali
 
 ## 📊 System Information
 - Firmware version
-- Atmosphère versio
+- Atmosphere version
