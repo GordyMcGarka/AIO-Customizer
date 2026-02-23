@@ -1,0 +1,43 @@
+name: Update Switch Versions
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get latest versions
+        run: |
+          ATM=$(curl -s https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases/latest | jq -r .tag_name)
+          HEK=$(curl -s https://api.github.com/repos/CTCaer/hekate/releases/latest | jq -r .tag_name)
+          SYS=$(curl -s https://api.github.com/repos/impeeza/sys-patch/releases/latest | jq -r .tag_name)
+          FW=$(curl -s https://api.github.com/repos/THZoria/NX_Firmware/releases/latest | jq -r .tag_name)
+
+          echo "ATM=$ATM" >> $GITHUB_ENV
+          echo "HEK=$HEK" >> $GITHUB_ENV
+          echo "SYS=$SYS" >> $GITHUB_ENV
+          echo "FW=$FW" >> $GITHUB_ENV
+
+      - name: Generate RELEASE.ini
+        run: |
+          echo "[Release Info]" > RELEASE.ini
+          echo "atmosphere=${ATM}" >> RELEASE.ini
+          echo "hekate=${HEK}" >> RELEASE.ini
+          echo "sys_patch=${SYS}" >> RELEASE.ini
+          echo "firmware=${FW}" >> RELEASE.ini
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add RELEASE.ini
+          git diff --cached --quiet || git commit -m "Auto update Switch versions"
+          git push
