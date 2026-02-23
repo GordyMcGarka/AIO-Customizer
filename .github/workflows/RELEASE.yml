@@ -14,8 +14,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: main
 
       - run: |
           ATM=$(curl -s https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases/latest | jq -r .tag_name)
@@ -33,10 +31,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          if git diff --quiet; then
-            echo "No changes"
-          else
-            git add RELEASE.ini
-            git commit -m "Auto update Switch versions"
-            git push origin HEAD:main
-          fi
+          git add RELEASE.ini
+          git commit -m "Auto update Switch versions" || exit 0
+
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git push
