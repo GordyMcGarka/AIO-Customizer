@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: update-switch-versions
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -16,7 +20,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
+          ref: main
           fetch-depth: 0
+
+      - name: Sync with remote
+        run: |
+          git pull origin main
 
       - name: Get latest versions
         run: |
@@ -31,7 +40,7 @@ jobs:
           echo "sys-patch=$SYS" >> RELEASE.ini
           echo "firmware=$FW" >> RELEASE.ini
 
-      - name: Commit and push if changed
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
