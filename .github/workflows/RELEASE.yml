@@ -30,7 +30,7 @@ jobs:
           echo "[Release Info]" > RELEASE.ini
           echo "atmosphere=${ATM}" >> RELEASE.ini
           echo "hekate=${HEK}" >> RELEASE.ini
-          echo "sys_patch=${SYS}" >> RELEASE.ini
+          echo "sys-patch=${SYS}" >> RELEASE.ini
           echo "firmware=${FW}" >> RELEASE.ini
 
       - name: Commit and push if changed
