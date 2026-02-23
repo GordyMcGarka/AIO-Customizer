@@ -13,41 +13,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
-          persist-credentials: true
-          fetch-depth: 0
+          ref: main
 
-      - name: Get latest versions
-        run: |
+      - run: |
           ATM=$(curl -s https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases/latest | jq -r .tag_name)
           HEK=$(curl -s https://api.github.com/repos/CTCaer/hekate/releases/latest | jq -r .tag_name)
           SYS=$(curl -s https://api.github.com/repos/impeeza/sys-patch/releases/latest | jq -r .tag_name)
           FW=$(curl -s https://api.github.com/repos/THZoria/NX_Firmware/releases/latest | jq -r .tag_name)
 
-          echo "ATM=$ATM" >> $GITHUB_ENV
-          echo "HEK=$HEK" >> $GITHUB_ENV
-          echo "SYS=$SYS" >> $GITHUB_ENV
-          echo "FW=$FW" >> $GITHUB_ENV
-
-      - name: Generate RELEASE.ini
-        run: |
           echo "[Release Info]" > RELEASE.ini
-          echo "atmosphere=${ATM}" >> RELEASE.ini
-          echo "hekate=${HEK}" >> RELEASE.ini
-          echo "sys-patch=${SYS}" >> RELEASE.ini
-          echo "firmware=${FW}" >> RELEASE.ini
+          echo "atmosphere=$ATM" >> RELEASE.ini
+          echo "hekate=$HEK" >> RELEASE.ini
+          echo "sys-patch=$SYS" >> RELEASE.ini
+          echo "firmware=$FW" >> RELEASE.ini
 
-      - name: Commit and push if changed
-        run: |
+      - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          if git diff --quiet RELEASE.ini; then
+          if git diff --quiet; then
             echo "No changes"
           else
             git add RELEASE.ini
             git commit -m "Auto update Switch versions"
-            git push
+            git push origin HEAD:main
           fi
