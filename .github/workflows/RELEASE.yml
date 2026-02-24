@@ -14,22 +14,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: Update RELEASE.ini
+      - name: Get latest versions
         run: |
-          set -e
-
+          set -euo pipefail
           get_latest() {
             curl -s "https://api.github.com/repos/$1/releases/latest" \
-            | jq -r '.tag_name // "unknown"' \
-            | sed 's/^v//I'
+              | jq -r '.tag_name // "unknown"'
           }
-
           atmosphere=$(get_latest "Atmosphere-NX/Atmosphere")
           hekate=$(get_latest "CTCaer/hekate")
           sys_patch=$(get_latest "impeeza/sys-patch")
           firmware=$(get_latest "THZoria/NX_Firmware")
-
           {
             echo "[Release Info]"
             echo "atmosphere=$atmosphere"
@@ -37,11 +35,20 @@ jobs:
             echo "sys-patch=$sys_patch"
             echo "firmware=$firmware"
           } > RELEASE.ini
-
       - name: Commit and push
         run: |
+          set -euo pipefail
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add RELEASE.ini
-          git commit -m "Update Switch versions"
-          git push
+          # Commit only if there are changes
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "Update Switch versions"
+          else
+            echo "No changes to commit."
+            exit 0
+          fi
+          # Sync with remote to avoid push rejection
+          git pull --rebase origin main || true
+          # Push changes
+          git push origin main
