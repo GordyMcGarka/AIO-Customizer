@@ -1,4 +1,4 @@
-name: Release Version Updater
+name: Update Switch Versions
 
 on:
   schedule:
@@ -13,28 +13,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: Get latest versions
         run: |
-          ATM=$(curl -s https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases/latest | jq -r .tag_name)
-          HEK=$(curl -s https://api.github.com/repos/CTCaer/hekate/releases/latest | jq -r .tag_name)
-          SYS=$(curl -s https://api.github.com/repos/impeeza/sys-patch/releases/latest | jq -r .tag_name)
-          FW=$(curl -s https://api.github.com/repos/THZoria/NX_Firmware/releases/latest | jq -r .tag_name)
+          atmosphere=$(curl -s https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases/latest | jq -r .tag_name)
+          hekate=$(curl -s https://api.github.com/repos/CTCaer/hekate/releases/latest | jq -r .tag_name)
+          sys_patch=$(curl -s https://api.github.com/repos/impeeza/sys-patch/releases/latest | jq -r .tag_name)
+          firmware=$(curl -s https://api.github.com/repos/THZoria/NX_Firmware/releases/latest | jq -r .tag_name)
 
           echo "[Release Info]" > RELEASE.ini
-          echo "atmosphere=${ATM}" >> RELEASE.ini
-          echo "hekate=${HEK}" >> RELEASE.ini
-          echo "sys-patch=${SYS}" >> RELEASE.ini
-          echo "firmware=${FW}" >> RELEASE.ini
+          echo "atmosphere=$atmosphere" >> RELEASE.ini
+          echo "hekate=$hekate" >> RELEASE.ini
+          echo "sys-patch=$sys_patch" >> RELEASE.ini
+          echo "firmware=$firmware" >> RELEASE.ini
 
-      - name: Commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Auto update Switch versions"
-          file_pattern: 'RELEASE.ini'
-          commit_author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
-          push_options: '--force'
+      - name: Sync remote branch
+        run: git pull --rebase origin main
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add RELEASE.ini
+          git commit -m "Auto update Switch versions" || exit 0
+          git push origin main
