@@ -12,32 +12,32 @@ jobs:
   update:
     runs-on: ubuntu-latest
 
-steps:
-  - uses: actions/checkout@v3
-    with:
-      fetch-depth: 0
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-  - name: Get latest versions
-    run: |
-      atmosphere=$(curl -s https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases/latest | jq -r .tag_name)
-      hekate=$(curl -s https://api.github.com/repos/CTCaer/hekate/releases/latest | jq -r .tag_name)
-      sys_patch=$(curl -s https://api.github.com/repos/impeeza/sys-patch/releases/latest | jq -r .tag_name)
-      firmware=$(curl -s https://api.github.com/repos/THZoria/NX_Firmware/releases/latest | jq -r .tag_name)
+      - name: Get latest versions
+        run: |
+          atmosphere=$(curl -s https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases/latest | jq -r .tag_name)
+          hekate=$(curl -s https://api.github.com/repos/CTCaer/hekate/releases/latest | jq -r .tag_name)
+          sys_patch=$(curl -s https://api.github.com/repos/impeeza/sys-patch/releases/latest | jq -r .tag_name)
+          firmware=$(curl -s https://api.github.com/repos/THZoria/NX_Firmware/releases/latest | jq -r .tag_name)
 
-      echo "[Release Info]" > RELEASE.ini
-      echo "atmosphere=$atmosphere" >> RELEASE.ini
-      echo "hekate=$hekate" >> RELEASE.ini
-      echo "sys-patch=$sys_patch" >> RELEASE.ini
-      echo "firmware=$firmware" >> RELEASE.ini
+          echo "[Release Info]" > RELEASE.ini
+          echo "atmosphere=$atmosphere" >> RELEASE.ini
+          echo "hekate=$hekate" >> RELEASE.ini
+          echo "sys-patch=$sys_patch" >> RELEASE.ini
+          echo "firmware=$firmware" >> RELEASE.ini
 
-  - name: Sync remote branch
-    run: git pull --rebase origin main
+      - name: Sync remote branch
+        run: git pull --rebase origin main
 
-  - name: Commit and push
-    run: |
-      git config user.name "github-actions"
-      git config user.email "github-actions@github.com"
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
 
-      git add RELEASE.ini
-      git commit -m "Auto update Switch versions" || exit 0
-      git push origin main
+          git add RELEASE.ini
+          git commit -m "Auto update Switch versions" || exit 0
+          git push origin main
