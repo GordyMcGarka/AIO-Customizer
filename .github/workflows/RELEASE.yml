@@ -16,7 +16,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Récupère tout l'historique
+          fetch-depth: 0
 
       - name: Get latest versions
         run: |
@@ -32,23 +32,9 @@ jobs:
           echo "firmware=${FW}" >> RELEASE.ini
 
       - name: Commit and push changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add RELEASE.ini
-
-          # Si rien n'a changé, on s'arrête là
-          if git diff --cached --quiet; then
-            echo "Aucun changement à commiter."
-            exit 0
-          fi
-
-          git commit -m "Auto update Switch versions"
-
-          # Stratégie de secours : On force la mise à jour par rapport au serveur
-          git fetch origin main
-          git rebase origin/main
-          
-          # Tentative de push normale, sinon force push contrôlé
-          git push origin main || git push origin main --force
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto update Switch versions"
+          file_pattern: 'RELEASE.ini'
+          commit_author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          push_options: '--force'
