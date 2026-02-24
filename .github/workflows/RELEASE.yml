@@ -13,7 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Version plus récente (v4)
 
       - name: Get latest versions
         run: |
@@ -28,11 +29,24 @@ jobs:
           echo "sys-patch=$sys_patch" >> RELEASE.ini
           echo "firmware=$firmware" >> RELEASE.ini
 
-      - name: Commit and force push
+      - name: Commit and push changes
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+          # Utilisation de l'identité officielle du bot GitHub
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add RELEASE.ini
-          git commit -m "Auto update Switch versions" || exit 0
-          git push --force-with-lease
+
+          # Vérifier s'il y a des modifications à commiter
+          if git diff --staged --quiet; then
+            echo "Aucun changement détecté dans les versions."
+            exit 0
+          fi
+
+          git commit -m "Auto update Switch versions"
+
+          # Résoudre les conflits si le dépôt distant a bougé pendant l'exécution
+          git pull --rebase origin main
+          
+          # Pousser les changements
+          git push origin main
