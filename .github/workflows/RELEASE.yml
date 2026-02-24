@@ -16,7 +16,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Récupère tout l'historique
 
       - name: Get latest versions
         run: |
@@ -37,17 +37,18 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add RELEASE.ini
-          
-          # On vérifie s'il y a des changements avant de continuer
+
+          # Si rien n'a changé, on s'arrête là
           if git diff --cached --quiet; then
-            echo "Aucun changement détecté."
+            echo "Aucun changement à commiter."
             exit 0
           fi
 
           git commit -m "Auto update Switch versions"
 
-          # On récupère les changements distants qui auraient pu arriver entre temps
-          # Le rebase met votre commit au-dessus des autres
-          git pull --rebase origin main
+          # Stratégie de secours : On force la mise à jour par rapport au serveur
+          git fetch origin main
+          git rebase origin/main
           
-          git push origin main
+          # Tentative de push normale, sinon force push contrôlé
+          git push origin main || git push origin main --force
