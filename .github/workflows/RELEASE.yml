@@ -14,39 +14,40 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4 # Version plus récente (v4)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Get latest versions
         run: |
-          atmosphere=$(curl -s https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases/latest | jq -r .tag_name)
-          hekate=$(curl -s https://api.github.com/repos/CTCaer/hekate/releases/latest | jq -r .tag_name)
-          sys_patch=$(curl -s https://api.github.com/repos/impeeza/sys-patch/releases/latest | jq -r .tag_name)
-          firmware=$(curl -s https://api.github.com/repos/THZoria/NX_Firmware/releases/latest | jq -r .tag_name)
+          ATM=$(curl -s https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases/latest | jq -r .tag_name)
+          HEK=$(curl -s https://api.github.com/repos/CTCaer/hekate/releases/latest | jq -r .tag_name)
+          SYS=$(curl -s https://api.github.com/repos/impeeza/sys-patch/releases/latest | jq -r .tag_name)
+          FW=$(curl -s https://api.github.com/repos/THZoria/NX_Firmware/releases/latest | jq -r .tag_name)
 
           echo "[Release Info]" > RELEASE.ini
-          echo "atmosphere=$atmosphere" >> RELEASE.ini
-          echo "hekate=$hekate" >> RELEASE.ini
-          echo "sys-patch=$sys_patch" >> RELEASE.ini
-          echo "firmware=$firmware" >> RELEASE.ini
+          echo "atmosphere=${ATM}" >> RELEASE.ini
+          echo "hekate=${HEK}" >> RELEASE.ini
+          echo "sys-patch=${SYS}" >> RELEASE.ini
+          echo "firmware=${FW}" >> RELEASE.ini
 
       - name: Commit and push changes
         run: |
-          # Utilisation de l'identité officielle du bot GitHub
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add RELEASE.ini
-
-          # Vérifier s'il y a des modifications à commiter
-          if git diff --staged --quiet; then
-            echo "Aucun changement détecté dans les versions."
+          
+          # On vérifie s'il y a des changements avant de continuer
+          if git diff --cached --quiet; then
+            echo "Aucun changement détecté."
             exit 0
           fi
 
           git commit -m "Auto update Switch versions"
 
-          # Résoudre les conflits si le dépôt distant a bougé pendant l'exécution
+          # On récupère les changements distants qui auraient pu arriver entre temps
+          # Le rebase met votre commit au-dessus des autres
           git pull --rebase origin main
           
-          # Pousser les changements
           git push origin main
