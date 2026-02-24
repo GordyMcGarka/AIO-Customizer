@@ -39,5 +39,5 @@ jobs:
           git config user.email "github-actions@github.com"
 
           git add RELEASE.ini
-          git commit -m "Auto update Switch versions" || exit 0
+          git commit -m "update Switch versions" || exit 0
           git push origin main
