@@ -14,16 +14,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
-      - name: Get latest versions
+      - name: Update RELEASE.ini
         run: |
-          set -euo pipefail
+          set -e
 
           get_latest() {
             curl -s "https://api.github.com/repos/$1/releases/latest" \
-              | jq -r '.tag_name // "unknown"'
+            | jq -r '.tag_name // "unknown"' \
+            | sed 's/^v//I'
           }
 
           atmosphere=$(get_latest "Atmosphere-NX/Atmosphere")
@@ -41,23 +40,8 @@ jobs:
 
       - name: Commit and push
         run: |
-          set -euo pipefail
-
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-
           git add RELEASE.ini
-
-          # Commit only if there are changes
-          if ! git diff-index --quiet HEAD; then
-            git commit -m "Update Switch versions"
-          else
-            echo "No changes to commit."
-            exit 0
-          fi
-
-          # Sync with remote to avoid push rejection
-          git pull --rebase origin main || true
-
-          # Push changes
-          git push origin main
+          git commit -m "Update Switch versions"
+          git push
