@@ -43,10 +43,20 @@ jobs:
             echo "$tag"
           }
 
-          atmosphere=$(get_latest "Atmosphere-NX/Atmosphere")
-          hekate=$(get_latest "CTCaer/hekate")
-          sys_patch=$(get_latest "impeeza/sys-patch")
-          firmware=$(get_latest "THZoria/NX_Firmware")
+          atmosphere_new=$(get_latest "Atmosphere-NX/Atmosphere")
+          hekate_new=$(get_latest "CTCaer/hekate")
+          sys_patch_new=$(get_latest "impeeza/sys-patch")
+          firmware_new=$(get_latest "THZoria/NX_Firmware")
+
+          atmosphere_old=$(grep "^atmosphere=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+          hekate_old=$(grep "^hekate=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+          sys_patch_old=$(grep "^sys-patch=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+          firmware_old=$(grep "^firmware=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+
+          atmosphere=${atmosphere_new:-$atmosphere_old}
+          hekate=${hekate_new:-$hekate_old}
+          sys_patch=${sys_patch_new:-$sys_patch_old}
+          firmware=${firmware_new:-$firmware_old}
 
           {
             echo "[Release Info]"
