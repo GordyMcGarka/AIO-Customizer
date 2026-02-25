@@ -18,16 +18,38 @@ jobs:
           fetch-depth: 0
 
       - name: Get latest versions
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set -euo pipefail
+          set -e
+
           get_latest() {
-            curl -s "https://api.github.com/repos/$1/releases/latest" \
-              | jq -r '.tag_name // "unknown"'
+            repo="$1"
+
+            release=$(curl -s \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$repo/releases/latest")
+
+            tag=$(echo "$release" | jq -r '.tag_name // empty')
+
+            if [ -z "$tag" ]; then
+              tag=$(curl -s \
+                -H "Authorization: Bearer $GITHUB_TOKEN" \
+                "https://api.github.com/repos/$repo/tags" \
+                | jq -r '.[0].name // empty')
+            fi
+
+            tag="${tag#v}"
+
+            echo "$tag"
           }
+
           atmosphere=$(get_latest "Atmosphere-NX/Atmosphere")
           hekate=$(get_latest "CTCaer/hekate")
           sys_patch=$(get_latest "impeeza/sys-patch")
           firmware=$(get_latest "THZoria/NX_Firmware")
+
           {
             echo "[Release Info]"
             echo "atmosphere=$atmosphere"
@@ -35,20 +57,18 @@ jobs:
             echo "sys-patch=$sys_patch"
             echo "firmware=$firmware"
           } > RELEASE.ini
+
       - name: Commit and push
         run: |
-          set -euo pipefail
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
+
           git add RELEASE.ini
-          # Commit only if there are changes
+
           if ! git diff-index --quiet HEAD; then
             git commit -m "Update Switch versions"
+            git pull --rebase origin main || true
+            git push origin main
           else
             echo "No changes to commit."
-            exit 0
           fi
-          # Sync with remote to avoid push rejection
-          git pull --rebase origin main || true
-          # Push changes
-          git push origin main
