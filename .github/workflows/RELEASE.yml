@@ -40,8 +40,6 @@ jobs:
                 | jq -r '.[0].name // empty')
             fi
 
-            tag="${tag#v}"
-
             echo "$tag"
           }
 
