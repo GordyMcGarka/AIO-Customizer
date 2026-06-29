@@ -1,0 +1,26 @@
+[
+    {
+        "name": "None",
+        "command": "none"
+    },
+    {
+        "name": "Classic",
+        "command": "classic",
+        "label": "_classic"
+    },
+    {
+        "name": "Hue",
+        "command": "hue",
+        "label": "_hue"
+    },
+    {
+        "name": "Nobox",
+        "command": "nobox",
+        "label": "_nobox"
+    },
+    {
+        "name": "White",
+        "command": "white",
+        "label": "_white"
+    }
+]
