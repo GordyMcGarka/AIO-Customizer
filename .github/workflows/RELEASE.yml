@@ -47,31 +47,72 @@ jobs:
           hekate_new=$(get_latest "CTCaer/hekate")
           sys_patch_new=$(get_latest "impeeza/sys-patch")
           firmware_new=$(get_latest "THZoria/NX_Firmware")
+
           sys_tune_new=$(get_latest "ppkantorski/sys-tune")
           quickntp_new=$(get_latest "ppkantorski/QuickNTP")
+          horizon_oc_new=$(get_latest "Horizon-OC/Horizon-OC")
+          tetris_new=$(get_latest "ppkantorski/Tetris-Overlay")
+          ovlsysmodules_new=$(get_latest "ppkantorski/ovl-sysmodules")
+          status_monitor_new=$(get_latest "ppkantorski/Status-Monitor-Overlay")
+          fpslocker_new=$(get_latest "ppkantorski/FPSLocker")
+          reversenx_new=$(get_latest "ppkantorski/ReverseNX-RT")
+          fizeau_new=$(get_latest "ppkantorski/Fizeau")
+          sysdvr_new=$(get_latest "ppkantorski/sysdvr-overlay")
+          nxfancontrol_new=$(get_latest "ppkantorski/NX-FanControl")
 
           atmosphere_old=$(grep "^Atmosphere=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
           hekate_old=$(grep "^Hekate=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
           sys_patch_old=$(grep "^Sys-patch=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
           firmware_old=$(grep "^Firmware=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+
           sys_tune_old=$(grep "^Sys-tune=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
           quickntp_old=$(grep "^QuickNTP=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+          horizon_oc_old=$(grep "^Horizon-OC=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+          tetris_old=$(grep "^Tetris=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+          ovlsysmodules_old=$(grep "^OvlSysmodules=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+          status_monitor_old=$(grep "^Status-Monitor=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+          fpslocker_old=$(grep "^FPSLocker=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+          reversenx_old=$(grep "^ReverseNX-RT=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+          fizeau_old=$(grep "^Fizeau=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+          sysdvr_old=$(grep "^Sys-dvr=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
+          nxfancontrol_old=$(grep "^NX-FanControl=" RELEASE.ini 2>/dev/null | cut -d= -f2 || true)
 
           atmosphere=${atmosphere_new:-$atmosphere_old}
           hekate=${hekate_new:-$hekate_old}
           sys_patch=${sys_patch_new:-$sys_patch_old}
           firmware=${firmware_new:-$firmware_old}
+
           sys_tune=${sys_tune_new:-$sys_tune_old}
           quickntp=${quickntp_new:-$quickntp_old}
+          horizon_oc=${horizon_oc_new:-$horizon_oc_old}
+          tetris=${tetris_new:-$tetris_old}
+          ovlsysmodules=${ovlsysmodules_new:-$ovlsysmodules_old}
+          status_monitor=${status_monitor_new:-$status_monitor_old}
+          fpslocker=${fpslocker_new:-$fpslocker_old}
+          reversenx=${reversenx_new:-$reversenx_old}
+          fizeau=${fizeau_new:-$fizeau_old}
+          sysdvr=${sysdvr_new:-$sysdvr_old}
+          nxfancontrol=${nxfancontrol_new:-$nxfancontrol_old}
 
           {
-            echo "[Release Info]"
+            echo "[Firmware Release Info]"
             echo "Atmosphere=$atmosphere"
             echo "Hekate=$hekate"
             echo "Sys-patch=$sys_patch"
             echo "Firmware=$firmware"
+            echo
+            echo "[Overlays Release Info]"
             echo "Sys-tune=$sys_tune"
             echo "QuickNTP=$quickntp"
+            echo "Horizon-OC=$horizon_oc"
+            echo "Tetris=$tetris"
+            echo "OvlSysmodules=$ovlsysmodules"
+            echo "Status-Monitor=$status_monitor"
+            echo "FPSLocker=$fpslocker"
+            echo "ReverseNX-RT=$reversenx"
+            echo "Fizeau=$fizeau"
+            echo "Sys-dvr=$sysdvr"
+            echo "NX-FanControl=$nxfancontrol"
           } > RELEASE.ini
 
       - name: Commit and push
