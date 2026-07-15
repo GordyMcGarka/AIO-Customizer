@@ -40,6 +40,12 @@ jobs:
                 | jq -r '.[0].name // empty')
             fi
 
+            # Strip leading 'v' or 'V' for all repositories except Hekate
+            case "$repo" in
+              *hekate*) ;;
+              *) tag="${tag#[vV]}" ;;
+            esac
+
             echo "$tag"
           }
 
